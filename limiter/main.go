@@ -10,11 +10,12 @@ import (
 
 func main() {
 	// bucket := algos.NewTokenBucket(10, 1, 1000)
-	window := algos.NewFixedWindowCounter(60, 60)
+	// window := algos.NewFixedWindowCounter(60, 60)
+	sw := algos.NewSlidingWindowLog(1, 1)
 	http.HandleFunc("/limited", func(w http.ResponseWriter, r *http.Request) {
 		ip := r.RemoteAddr
 		fmt.Printf("Request at %v from ip:%s\n", time.Now(), ip)
-		allowed := window.ShouldAllow(ip)
+		allowed := sw.ShouldAllow(ip)
 		if !allowed {
 			w.WriteHeader(http.StatusTooManyRequests)
 			io.WriteString(w, "Request limit reached!!")
@@ -34,5 +35,5 @@ func main() {
 	if err != nil {
 		fmt.Printf("Server failed to start %v", err)
 	}
-	window.Init()
+	sw.Init()
 }
