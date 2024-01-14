@@ -1,18 +1,25 @@
 package algorithms
 
 import (
+	"math"
 	"sync"
 	"time"
 )
 
 type TokenBucket struct {
-	lock        sync.Mutex
-	ipBucketMap map[string]int
+	lock           sync.Mutex
+	ipBucketMap    map[string]int
+	capacity       int
+	refillCount    int
+	refillInterval int
 }
 
-func NewTokenBucket() *TokenBucket {
+func NewTokenBucket(capacity int, refillCount int, refillInterval int) *TokenBucket {
 	bucket := TokenBucket{
-		ipBucketMap: make(map[string]int),
+		ipBucketMap:    make(map[string]int),
+		capacity:       capacity,
+		refillCount:    refillCount,
+		refillInterval: refillInterval / 1000,
 	}
 	return &bucket
 }
@@ -37,13 +44,13 @@ func (t *TokenBucket) Init() {
 }
 
 func (t *TokenBucket) refill() {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Duration(t.refillInterval) * time.Second)
 	for {
 		_, ok := <-ticker.C
 		if ok {
 			t.lock.Lock()
 			for k, v := range t.ipBucketMap {
-				t.ipBucketMap[k] = v + 1
+				t.ipBucketMap[k] = int(math.Min(float64(v+t.refillCount), float64(t.capacity)))
 			}
 			t.lock.Unlock()
 		}
