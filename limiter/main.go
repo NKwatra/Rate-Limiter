@@ -11,7 +11,8 @@ import (
 func main() {
 	// bucket := algos.NewTokenBucket(10, 1, 1000)
 	// window := algos.NewFixedWindowCounter(60, 60)
-	sw := algos.NewSlidingWindowLog(1, 1)
+	// sw := algos.NewSlidingWindowLog(1, 1)
+	sw := algos.NewSlidingWindowCounter(2, 1)
 	http.HandleFunc("/limited", func(w http.ResponseWriter, r *http.Request) {
 		ip := r.RemoteAddr
 		fmt.Printf("Request at %v from ip:%s\n", time.Now(), ip)

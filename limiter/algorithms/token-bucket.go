@@ -19,7 +19,7 @@ func NewTokenBucket(capacity int, refillCount int, refillInterval int) *TokenBuc
 		ipBucketMap:    make(map[string]int),
 		capacity:       capacity,
 		refillCount:    refillCount,
-		refillInterval: refillInterval / 1000,
+		refillInterval: refillInterval,
 	}
 	return &bucket
 }
