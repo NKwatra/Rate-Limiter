@@ -29,7 +29,7 @@ func (t *TokenBucket) ShouldAllow(ip string) bool {
 	defer t.lock.Unlock()
 	val, exists := t.ipBucketMap[ip]
 	if !exists {
-		t.ipBucketMap[ip] = 9
+		t.ipBucketMap[ip] = t.capacity - 1
 		return true
 	} else if val == 0 {
 		return false
